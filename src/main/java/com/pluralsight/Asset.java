@@ -38,7 +38,7 @@ public class Asset {
     }
 
     public BigDecimal getValue() {
-        return originalCost;
+        return this.originalCost;
     }
     // A house's value is determined as
     // $180.00 per square foot (excellent)

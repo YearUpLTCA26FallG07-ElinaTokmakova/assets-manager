@@ -2,7 +2,7 @@ package com.pluralsight;
 
 import java.math.BigDecimal;
 
-public class House extends Asset{
+public class House extends Asset {
     private String address;
     private int condition; // 1-excellent, 2-good, 3-fair, 4-poor
     private int squareFoot;
@@ -32,6 +32,14 @@ public class House extends Asset{
         this.condition = condition;
     }
 
+    // Helper method to validate condition value
+    private static int checkedCondition(int condition) {
+        if (condition < 1 || condition > 4) {
+            throw new IllegalArgumentException(("Condition must be between 1 and 4."));
+        }
+        return condition;
+    }
+
     public int getSquareFoot() {
         return squareFoot;
     }
@@ -50,32 +58,19 @@ public class House extends Asset{
 
     @Override
     public BigDecimal getValue() {
-        BigDecimal pricePerSquareFoot;
-        // A house's value is determined as
-        // $180.00 per square foot (excellent)
-        // $130.00 per square foot (good)
-        // $90.00 per square foot (fair)
-        // $80.00 per square foot (poor)
-        // PLUS 25 cents per square foot of lot size
-        switch (condition) {
-            case 1 -> {
-                pricePerSquareFoot = BigDecimal.valueOf(180);
-            }
-            case 2 ->{
-                pricePerSquareFoot = BigDecimal.valueOf(130);
-            }
-            case 3 -> {
-                pricePerSquareFoot = BigDecimal.valueOf(90);
-            }
-            case 4 -> {
-               pricePerSquareFoot = BigDecimal.valueOf(80);
-            }
-            default -> {
-                System.out.println("Something went wrong");
-                return null;
-            }
-        }
-        return pricePerSquareFoot.multiply(BigDecimal.valueOf(squareFoot)).add(BigDecimal.valueOf(lotSize).multiply(BigDecimal.valueOf(0.25)));
+
+        int pricePerSquareFoot = switch (condition) {
+            case 1 -> 180; // $180.00 per square foot (excellent)
+            case 2 -> 130; // $130.00 per square foot (good)
+            case 3 -> 90;  // $90.00 per square foot (fair)
+            case 4 -> 80;  // $80.00 per square foot (poor)
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
+
+        return (BigDecimal.valueOf(pricePerSquareFoot))
+                .multiply(BigDecimal.valueOf(squareFoot))
+                .add(BigDecimal.valueOf(lotSize)
+                        .multiply(BigDecimal.valueOf(0.25))); // PLUS 25 cents per square foot of lot size
     }
 }
 

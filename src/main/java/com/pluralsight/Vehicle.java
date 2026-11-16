@@ -2,6 +2,7 @@ package com.pluralsight;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
 
 public class Vehicle extends Asset {
     private String makeModel;
@@ -41,19 +42,22 @@ public class Vehicle extends Asset {
 
     @Override
     public BigDecimal getValue() {
-        LocalDate today = LocalDate.now();
-        int vehicleAge = today.getYear() - year;
+        int today = Year.now().getValue();
+        int vehicleAge = Math.max(0, (today - year));
         BigDecimal depreciation;
+
         if (0 <= vehicleAge && vehicleAge <= 3) {
             depreciation = BigDecimal.valueOf(0.03);
         } else if (4 <= vehicleAge && vehicleAge <= 6) {
             depreciation = BigDecimal.valueOf(0.06);
         } else if (7 <= vehicleAge && vehicleAge <= 10) {
             depreciation = BigDecimal.valueOf(0.08);
-        } else {
+        } else if (vehicleAge > 10) {
             return BigDecimal.valueOf(1000.00);
         }
-        BigDecimal value = BigDecimal.valueOf(getOriginalCost().subtract()getOriginalCost() * 0.03);
+
+        BigDecimal value = Math.pow(BigDecimal.valueOf(100).subtract(BigDecimal.valueOf(depreciation))
+                .divide(BigDecimal.valueOf(100)));
         return value;
     }
     // A car's value is determined as
