@@ -50,7 +50,32 @@ public class House extends Asset{
 
     @Override
     public BigDecimal getValue() {
-        return getOriginalCost();
+        BigDecimal pricePerSquareFoot;
+        // A house's value is determined as
+        // $180.00 per square foot (excellent)
+        // $130.00 per square foot (good)
+        // $90.00 per square foot (fair)
+        // $80.00 per square foot (poor)
+        // PLUS 25 cents per square foot of lot size
+        switch (condition) {
+            case 1 -> {
+                pricePerSquareFoot = BigDecimal.valueOf(180);
+            }
+            case 2 ->{
+                pricePerSquareFoot = BigDecimal.valueOf(130);
+            }
+            case 3 -> {
+                pricePerSquareFoot = BigDecimal.valueOf(90);
+            }
+            case 4 -> {
+               pricePerSquareFoot = BigDecimal.valueOf(80);
+            }
+            default -> {
+                System.out.println("Something went wrong");
+                return null;
+            }
+        }
+        return pricePerSquareFoot.multiply(BigDecimal.valueOf(squareFoot)).add(BigDecimal.valueOf(lotSize).multiply(BigDecimal.valueOf(0.25)));
     }
 }
 
