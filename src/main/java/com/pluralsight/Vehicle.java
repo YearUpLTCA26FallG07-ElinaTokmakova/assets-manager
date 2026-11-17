@@ -2,9 +2,7 @@ package com.pluralsight;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.Year;
-import java.util.Locale;
 
 public class Vehicle extends Asset {
     private String makeModel;
@@ -49,27 +47,28 @@ public class Vehicle extends Asset {
         BigDecimal depreciation = null;
 
         if (0 <= vehicleAge && vehicleAge <= 3) {
-            depreciation = BigDecimal.valueOf(30);
+            depreciation = BigDecimal.valueOf(0.03);
         } else if (4 <= vehicleAge && vehicleAge <= 6) {
-            depreciation = BigDecimal.valueOf(60);
+            depreciation = BigDecimal.valueOf(0.06);
         } else if (7 <= vehicleAge && vehicleAge <= 10) {
-            depreciation = BigDecimal.valueOf(80);
+            depreciation = BigDecimal.valueOf(0.08);
         } else if (vehicleAge > 10) {
             return BigDecimal.valueOf(1000.00);
         }
 
-        BigDecimal subvalue = BigDecimal.valueOf(1)
+        BigDecimal value = BigDecimal.valueOf(1)
                 .subtract(depreciation)
-                .pow(BigDecimal.valueOf(vehicleAge))
-                .multiply(getOriginalCost());
+                .pow(vehicleAge)
+                .multiply(getOriginalCost())
+                .setScale(2, RoundingMode.HALF_UP);
 
         if ((odometer > 100000) &&
                 (!makeModel.toLowerCase().contains("honda")
-                || !makeModel.toLowerCase().contains("toyota"))) {
+                && !makeModel.toLowerCase().contains("toyota"))) {
                 value = value.subtract(
                         value.multiply(BigDecimal.valueOf(0.25)));
             }
-        return value;
+        return value.setScale(2, RoundingMode.HALF_UP);
     }
     // A car's value is determined as
     // 0-3 years old - 3% reduced value of cost per year
