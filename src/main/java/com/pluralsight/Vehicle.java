@@ -1,8 +1,10 @@
 package com.pluralsight;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Locale;
 
 public class Vehicle extends Asset {
     private String makeModel;
@@ -43,21 +45,30 @@ public class Vehicle extends Asset {
     @Override
     public BigDecimal getValue() {
         int today = Year.now().getValue();
-        int vehicleAge = Math.max(0, (today - year));
-        BigDecimal depreciation;
+        int vehicleAge = Math.abs(today - year);
+        BigDecimal depreciation = null;
 
         if (0 <= vehicleAge && vehicleAge <= 3) {
-            depreciation = BigDecimal.valueOf(0.03);
+            depreciation = BigDecimal.valueOf(30);
         } else if (4 <= vehicleAge && vehicleAge <= 6) {
-            depreciation = BigDecimal.valueOf(0.06);
+            depreciation = BigDecimal.valueOf(60);
         } else if (7 <= vehicleAge && vehicleAge <= 10) {
-            depreciation = BigDecimal.valueOf(0.08);
+            depreciation = BigDecimal.valueOf(80);
         } else if (vehicleAge > 10) {
             return BigDecimal.valueOf(1000.00);
         }
 
-        BigDecimal value = Math.pow(BigDecimal.valueOf(100).subtract(BigDecimal.valueOf(depreciation))
-                .divide(BigDecimal.valueOf(100)));
+        BigDecimal subvalue = BigDecimal.valueOf(1)
+                .subtract(depreciation)
+                .pow(BigDecimal.valueOf(vehicleAge))
+                .multiply(getOriginalCost());
+
+        if ((odometer > 100000) &&
+                (!makeModel.toLowerCase().contains("honda")
+                || !makeModel.toLowerCase().contains("toyota"))) {
+                value = value.subtract(
+                        value.multiply(BigDecimal.valueOf(0.25)));
+            }
         return value;
     }
     // A car's value is determined as
@@ -67,5 +78,5 @@ public class Vehicle extends Asset {
     // over 10 years old - $1000.00
     // MINUS reduce final value by 25% if over 100,000 miles
     // unless makeModel contains word Honda or Toyota
-    // final cost = initial value * ((100 - depreciation rate) / 100) to the power of the number of years
+    // final cost = original cost * (1 - depreciation rate) to the power of the number of years
 }
